@@ -273,8 +273,6 @@ class ReceiptPrinter
             $this->printer->feed(2);
             // Cut the receipt
             $this->printer->cut();
-            // Open drawer
-            $this->printer->openDrawer();
             $this->printer->close();
         } else {
             throw new Exception('Printer has not been initialized.');
@@ -331,8 +329,6 @@ class ReceiptPrinter
             $this->printer->feed(2);
             // Cut the receipt
             $this->printer->cut();
-            // Open drawer
-            $this->printer->openDrawer();
             $this->printer->close();
         } else {
             throw new Exception('Printer has not been initialized.');
