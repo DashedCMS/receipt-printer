@@ -8,13 +8,13 @@ class Item
     private $name;
     private $qty;
     private $price;
-    private $currency = 'Rp';
+    private $currency = '€';
 
     function __construct($name, $qty, $price) {
         $this->name = $name;
         $this->qty = $qty;
         $this->price = $price;
-        $this->paper_size = '57mm';
+        $this->paper_size = '80mm';
     }
 
     public function setCurrency($currency) {
@@ -50,7 +50,7 @@ class Item
         $item_subtotal = $this->currency . number_format($this->price * $this->qty, 0, ',', '.');
 
         $print_name = str_pad($this->name, 16) ;
-        $print_priceqty = str_pad($item_price . ' x ' . $this->qty, $left_cols);
+        $print_priceqty = str_pad($this->qty . ' x ' . $item_price, $left_cols);
         $print_subtotal = str_pad($item_subtotal, $right_cols, ' ', STR_PAD_LEFT);
 
         return "$print_name\n$print_priceqty$print_subtotal\n";

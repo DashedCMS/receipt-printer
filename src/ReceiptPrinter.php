@@ -2,6 +2,9 @@
 
 namespace Dashed\ReceiptPrinter;
 
+use Dashed\DashedCore\Models\Customsetting;
+use Dashed\DashedEcommerceCore\Models\Order;
+use Dashed\DashedTranslations\Models\Translation;
 use Dashed\ReceiptPrinter\Item as Item;
 use Dashed\ReceiptPrinter\Store as Store;
 use Mike42\Escpos\Printer;
@@ -18,7 +21,7 @@ class ReceiptPrinter
     private $logo;
     private $store;
     private $items;
-    private $currency = 'Rp';
+    private $currency = '€';
     private $subtotal = 0;
     private $tax_percentage = 10;
     private $tax = 0;
@@ -26,13 +29,16 @@ class ReceiptPrinter
     private $request_amount = 0;
     private $qr_code = [];
     private $transaction_id = '';
+    private $order;
 
-    function __construct() {
+    function __construct()
+    {
         $this->printer = null;
         $this->items = [];
     }
 
-    public function init($connector_type, $connector_descriptor, $connector_port = 9100) {
+    public function init($connector_type, $connector_descriptor, $connector_port = 9100)
+    {
         switch (strtolower($connector_type)) {
             case 'cups':
                 $connector = new CupsPrintConnector($connector_descriptor);
@@ -58,121 +64,149 @@ class ReceiptPrinter
         }
     }
 
-    public function close() {
+    public function close()
+    {
         if ($this->printer) {
             $this->printer->close();
         }
     }
 
-    public function setStore($mid, $name, $address, $phone, $email, $website) {
-        $this->store = new Store($mid, $name, $address, $phone, $email, $website);
+    public function setStore($name, $address, $phone, $email, $website)
+    {
+        $this->store = new Store($name, $address, $phone, $email, $website);
     }
 
-    public function setLogo($logo) {
+    public function setOrder(Order $order)
+    {
+        $this->order = $order;
+    }
+
+    public function setLogo($logo)
+    {
         $this->logo = $logo;
     }
 
-    public function setCurrency($currency) {
+    public function setCurrency($currency)
+    {
         $this->currency = $currency;
     }
 
-    public function addItem($name, $qty, $price) {
+    public function addItem($name, $qty, $price)
+    {
         $item = new Item($name, $qty, $price);
         $item->setCurrency($this->currency);
 
         $this->items[] = $item;
     }
 
-    public function setRequestAmount($amount) {
+    public function setRequestAmount($amount)
+    {
         $this->request_amount = $amount;
     }
 
-    public function setTax($tax) {
+    public function setTax($tax)
+    {
         $this->tax_percentage = $tax;
 
         if ($this->subtotal == 0) {
             $this->calculateSubtotal();
         }
 
-        $this->tax = (int) $this->tax_percentage / 100 * (int) $this->subtotal;
+        $this->tax = (int)$this->tax_percentage / 100 * (int)$this->subtotal;
     }
 
-    public function calculateSubtotal() {
+    public function calculateSubtotal()
+    {
         $this->subtotal = 0;
 
         foreach ($this->items as $item) {
-            $this->subtotal += (int) $item->getQty() * (int) $item->getPrice();
+            $this->subtotal += (int)$item->getQty() * (int)$item->getPrice();
         }
     }
 
-    public function calculateGrandTotal() {
+    public function calculateGrandTotal()
+    {
         if ($this->subtotal == 0) {
             $this->calculateSubtotal();
         }
 
-        $this->grandtotal = (int) $this->subtotal + (int) $this->tax;
+        $this->grandtotal = (int)$this->subtotal + (int)$this->tax;
     }
 
-    public function setTransactionID($transaction_id) {
+    public function setTransactionID($transaction_id)
+    {
         $this->transaction_id = $transaction_id;
     }
 
-    public function setQRcode($content) {
+    public function setQRcode($content)
+    {
         $this->qr_code = $content;
     }
 
-    public function setTextSize($width = 1, $height = 1) {
+    public function setTextSize($width = 1, $height = 1)
+    {
         if ($this->printer) {
-            $width = ($width >= 1 && $width <= 8) ? (int) $width : 1;
-            $height = ($height >= 1 && $height <= 8) ? (int) $height : 1;
+            $width = ($width >= 1 && $width <= 8) ? (int)$width : 1;
+            $height = ($height >= 1 && $height <= 8) ? (int)$height : 1;
             $this->printer->setTextSize($width, $height);
         }
     }
 
-    public function getPrintableQRcode() {
+    public function getPrintableQRcode()
+    {
         return json_encode($this->qr_code);
     }
 
-    public function getPrintableHeader($left_text, $right_text, $is_double_width = false) {
+    public function getPrintableHeader($left_text, $right_text, $is_double_width = false)
+    {
         $cols_width = $is_double_width ? 8 : 16;
 
         return str_pad($left_text, $cols_width) . str_pad($right_text, $cols_width, ' ', STR_PAD_LEFT);
     }
 
-    public function getPrintableSummary($label, $value, $is_double_width = false) {
+    public function getPrintableSummary($label, $value, $is_double_width = false)
+    {
         $left_cols = $is_double_width ? 6 : 12;
         $right_cols = $is_double_width ? 10 : 20;
 
-        $formatted_value = $this->currency . number_format($value, 0, ',', '.');
+        try{
+            $value = $this->currency . number_format($value, 0, ',', '.');
+        }catch (\Exception $e) {
+        }
 
-        return str_pad($label, $left_cols) . str_pad($formatted_value, $right_cols, ' ', STR_PAD_LEFT);
+        return str_pad($label, $left_cols) . str_pad($value, $right_cols, ' ', STR_PAD_LEFT);
     }
 
-    public function feed($feed = NULL) {
+    public function feed($feed = NULL)
+    {
         $this->printer->feed($feed);
     }
 
-    public function cut() {
+    public function cut()
+    {
         $this->printer->cut();
     }
 
-    public function printDashedLine() {
+    public function printDashedLine($total = 47)
+    {
         $line = '';
 
-        for ($i = 0; $i < 32; $i++) {
+        for ($i = 0; $i < $total; $i++) {
             $line .= '-';
         }
 
         $this->printer->text($line);
     }
 
-    public function printLogo($mode = 0) {
+    public function printLogo($mode = 0)
+    {
         if ($this->logo) {
             $this->printImage($this->logo, $mode);
         }
     }
 
-    public function printImage($image_path, $mode = 0) {
+    public function printImage($image_path, $mode = 0)
+    {
         if ($this->printer && $image_path) {
             $image = EscposImage::load($image_path, false);
 
@@ -194,29 +228,30 @@ class ReceiptPrinter
         }
     }
 
-    public function printQRcode() {
+    public function printQRcode()
+    {
         if (!empty($this->qr_code)) {
-            $this->printer->qrCode($this->getPrintableQRcode(), Printer::QR_ECLEVEL_L, 8);
+            $this->printer->qrCode($this->getPrintableQRcode(), Printer::BARCODE_TEXT_BELOW, 8);
         }
     }
 
-    public function openDrawer($pin = 0, $on_duration = 120, $off_duration = 240) {
+    public function printBarcode()
+    {
+        if (!empty($this->qr_code)) {
+            $this->printer->barcode('{B' . $this->qr_code, Printer::BARCODE_CODE128);
+        }
+    }
+
+    public function openDrawer($pin = 0, $on_duration = 120, $off_duration = 240)
+    {
         if ($this->printer) {
             $this->printer->pulse($pin, $on_duration, $off_duration);
         }
     }
 
-    public function printReceipt($with_items = true) {
-        if ($this->printer) {
-            // Get total, subtotal, etc
-            $subtotal = $this->getPrintableSummary('Subtotal', $this->subtotal);
-            $tax = $this->getPrintableSummary('Tax', $this->tax);
-            $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
-            $header = $this->getPrintableHeader(
-                'TID: ' . $this->transaction_id,
-                'MID: ' . $this->store->getMID()
-            );
-            $footer = "Thank you for shopping!\n";
+    public function printReceipt()
+    {
+        if ($this->printer && $this->order) {
             // Init printer settings
             $this->printer->initialize();
             $this->printer->selectPrintMode();
@@ -232,44 +267,67 @@ class ReceiptPrinter
             $this->printer->feed(2);
             $this->printer->text("{$this->store->getName()}\n");
             $this->printer->selectPrintMode();
-            $this->printer->text("{$this->store->getAddress()}\n");
-            $this->printer->text($header . "\n");
+            $this->printer->text(Customsetting::get('company_street') . ' ' . Customsetting::get('company_street_number') . "\n");
+            $this->printer->text(Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . "\n");
+            $this->feed(2);
+
+            $this->printDashedLine();
+            $this->printer->text($this->getPrintableSummary(Translation::get('transaction_id', 'receipt', 'Transactie ID: '), $this->order->invoice_id) . "\n");
+            $this->printDashedLine();
             $this->printer->feed();
+
             // Print receipt title
             $this->printer->setEmphasis(true);
-            $this->printer->text("RECEIPT\n");
+            $this->printer->text(Translation::get('receipt', 'receipt', 'Bon') . "\n");
             $this->printer->setEmphasis(false);
             $this->printer->feed();
             // Print items
-            if ($with_items) {
-                $this->printer->setJustification(Printer::JUSTIFY_LEFT);
-                foreach ($this->items as $item) {
-                    $this->printer->text($item);
+            $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+            $productCount = count($this->order->orderProducts);
+            foreach ($this->order->orderProducts as $orderProduct) {
+                $this->printer->text(new \Dashed\ReceiptPrinter\Item($orderProduct->name, $orderProduct->quantity, $orderProduct->price));
+                if ($productCount > 1) {
+                    $this->printDashedLine();
                 }
-                $this->printer->feed();
+                $productCount--;
             }
-            // Print subtotal
+            $this->printer->feed();
+
             $this->printer->setEmphasis(true);
-            $this->printer->text($subtotal);
+            $this->printer->text($this->getPrintableSummary(Translation::get('subtotal', 'receipt', 'Subtotaal'), $this->order->subtotal));
             $this->printer->setEmphasis(false);
             $this->printer->feed();
-            // Print tax
-            $this->printer->text($tax);
+
+            $this->printer->text($this->getPrintableSummary(Translation::get('tax', 'receipt', 'BTW'), $this->order->btw));
             $this->printer->feed(2);
-            // Print grand total
+
+            if ($this->order->discount > 0) {
+                $this->printer->setEmphasis(true);
+                $this->printer->text($this->getPrintableSummary(Translation::get('discount', 'receipt', 'Korting'), $this->order->discount));
+                $this->printer->setEmphasis(false);
+                $this->printer->feed(2);
+            }
+
             $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $this->printer->text($total);
+            $this->printer->text($this->getPrintableSummary(Translation::get('total', 'receipt', 'Totaal'), $this->order->total, true) . "\n");
+            $this->printDashedLine(23);
             $this->printer->feed();
+
             $this->printer->selectPrintMode();
-            // Print qr code
-            $this->printQRcode();
             // Print receipt footer
             $this->printer->feed();
             $this->printer->setJustification(Printer::JUSTIFY_CENTER);
-            $this->printer->text($footer);
+            $this->printer->text(Translation::get('thanks-for-shopping', 'receipt', 'Bedankt voor je bezoek!'));
             $this->printer->feed();
-            // Print receipt date
+//            // Print receipt date
             $this->printer->text(date('j F Y H:i:s'));
+            $this->printer->feed(2);
+            $this->printer->text('Email: ' . Customsetting::get('site_to_email') . "\n");
+            $this->printer->text('Webshop: ' . url('/') . "\n");
+            $this->printer->text('Telefoon: ' . Customsetting::get('company_phone_number'));
+            $this->printer->feed(2);
+            // Print qr code
+            $this->printBarcode();
             $this->printer->feed(2);
             // Cut the receipt
             $this->printer->cut();
@@ -279,13 +337,13 @@ class ReceiptPrinter
         }
     }
 
-    public function printRequest() {
+    public function printRequest()
+    {
         if ($this->printer) {
             // Get request amount
             $total = $this->getPrintableSummary('TOTAL', $this->request_amount, true);
             $header = $this->getPrintableHeader(
-                'TID: ' . $this->transaction_id,
-                'MID: ' . $this->store->getMID()
+                'TID: ' . $this->transaction_id
             );
             $footer = "This is not a proof of payment.\n";
             // Init printer settings
