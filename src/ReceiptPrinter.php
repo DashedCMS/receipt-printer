@@ -164,14 +164,13 @@ class ReceiptPrinter
         return str_pad($left_text, $cols_width) . str_pad($right_text, $cols_width, ' ', STR_PAD_LEFT);
     }
 
-    public function getPrintableSummary($label, $value, $is_double_width = false)
+    public function getPrintableSummary($label, $value, $is_double_width = false, $format = true)
     {
         $left_cols = $is_double_width ? 6 : 12;
         $right_cols = $is_double_width ? 10 : 20;
 
-        try{
-            $value = $this->currency . number_format($value, 0, ',', '.');
-        }catch (\Exception $e) {
+        if ($format) {
+            $value = $this->currency . number_format($value, 2, ',', '.');
         }
 
         return str_pad($label, $left_cols) . str_pad($value, $right_cols, ' ', STR_PAD_LEFT);
@@ -249,7 +248,7 @@ class ReceiptPrinter
         }
     }
 
-    public function printReceipt()
+    public function printReceipt($isCopy = false)
     {
         if ($this->printer && $this->order) {
             // Init printer settings
@@ -272,13 +271,13 @@ class ReceiptPrinter
             $this->feed(2);
 
             $this->printDashedLine();
-            $this->printer->text($this->getPrintableSummary(Translation::get('transaction_id', 'receipt', 'Transactie ID: '), $this->order->invoice_id) . "\n");
+            $this->printer->text($this->getPrintableSummary(Translation::get('transaction_id', 'receipt', 'Transactie ID: '), '#' . $this->order->invoice_id, false, false) . "\n");
             $this->printDashedLine();
             $this->printer->feed();
 
             // Print receipt title
             $this->printer->setEmphasis(true);
-            $this->printer->text(Translation::get('receipt', 'receipt', 'Bon') . "\n");
+            $this->printer->text(($isCopy ? Translation::get('receipt-copy', 'receipt', 'KOPIE BON') : Translation::get('receipt', 'receipt', 'BON')) . "\n");
             $this->printer->setEmphasis(false);
             $this->printer->feed();
             // Print items

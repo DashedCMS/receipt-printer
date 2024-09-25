@@ -46,8 +46,8 @@ class Item
                 break;
         }
 
-        $item_price = $this->currency . number_format($this->price, 0, ',', '.');
-        $item_subtotal = $this->currency . number_format($this->price * $this->qty, 0, ',', '.');
+        $item_price = $this->currency . number_format($this->price, 2, ',', '.');
+        $item_subtotal = $this->currency . number_format($this->price * $this->qty, 2, ',', '.');
 
         $print_name = str_pad($this->name, 16) ;
         $print_priceqty = str_pad($this->qty . ' x ' . $item_price, $left_cols);
