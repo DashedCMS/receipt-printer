@@ -12,12 +12,12 @@ Simple Laravel package to integrate ESC/POS Print Driver for PHP.
 Via Composer
 
 ``` bash
-$ composer require charlieuki/receiptprinter
+$ composer require Dashed/receiptprinter
 ```
 
 ## Sample App
 
-I have set up [a simple app](https://github.com/charlieuki/receipt-printer-example) based on Laravel 7 to serve as a demo.
+I have set up [a simple app](https://github.com/Dashed/receipt-printer-example) based on Laravel 7 to serve as a demo.
 
 ## Usage
 
@@ -41,7 +41,7 @@ Edit the config file located at `config/receiptprinter.php` as follows:
 Include the library:
 
 ```
-use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
+use Dashed\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 ```
 
 Then use any one of these two functions to send "print" command to the printer.
@@ -57,7 +57,7 @@ printRequest()
 ## Example (Print Receipt)
 
 ```
-use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
+use Dashed\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 
 ...
 
@@ -144,7 +144,7 @@ $printer->printReceipt();
 ## Example (Print Request)
 
 ```
-use charlieuki\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
+use Dashed\ReceiptPrinter\ReceiptPrinter as ReceiptPrinter;
 
 ...
 
@@ -203,7 +203,7 @@ Please see [contributing.md](contributing.md) for details and a todolist.
 
 ## Problems
 
-If you discover any issues, please post the details on the [issue tracker](https://github.com/charlieuki/receipt-printer/issues).
+If you discover any issues, please post the details on the [issue tracker](https://github.com/Dashed/receipt-printer/issues).
 
 ## Credits
 
@@ -213,14 +213,14 @@ If you discover any issues, please post the details on the [issue tracker](https
 
 MIT. Please see the [license file](license.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/charlieuki/receiptprinter.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/charlieuki/receiptprinter.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/charlieuki/receiptprinter/master.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/Dashed/receiptprinter.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/Dashed/receiptprinter.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/Dashed/receiptprinter/master.svg?style=flat-square
 [ico-styleci]: https://styleci.io/repos/12345678/shield
 
-[link-packagist]: https://packagist.org/packages/charlieuki/receiptprinter
-[link-downloads]: https://packagist.org/packages/charlieuki/receiptprinter
-[link-travis]: https://travis-ci.org/charlieuki/receiptprinter
+[link-packagist]: https://packagist.org/packages/Dashed/receiptprinter
+[link-downloads]: https://packagist.org/packages/Dashed/receiptprinter
+[link-travis]: https://travis-ci.org/Dashed/receiptprinter
 [link-styleci]: https://styleci.io/repos/12345678
-[link-author]: https://github.com/charlieuki
+[link-author]: https://github.com/Dashed
 [link-contributors]: ../../contributors

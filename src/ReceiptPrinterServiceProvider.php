@@ -1,6 +1,6 @@
 <?php
 
-namespace charlieuki\ReceiptPrinter;
+namespace Dashed\ReceiptPrinter;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -13,8 +13,8 @@ class ReceiptPrinterServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'charlieuki');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'charlieuki');
+        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'Dashed');
+        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'Dashed');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
@@ -48,7 +48,7 @@ class ReceiptPrinterServiceProvider extends ServiceProvider
     {
         return ['receiptprinter'];
     }
-    
+
     /**
      * Console-specific booting.
      *
@@ -63,17 +63,17 @@ class ReceiptPrinterServiceProvider extends ServiceProvider
 
         // Publishing the views.
         /*$this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/charlieuki'),
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/Dashed'),
         ], 'receiptprinter.views');*/
 
         // Publishing assets.
         /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/charlieuki'),
+            __DIR__.'/../resources/assets' => public_path('vendor/Dashed'),
         ], 'receiptprinter.views');*/
 
         // Publishing the translation files.
         /*$this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/charlieuki'),
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/Dashed'),
         ], 'receiptprinter.views');*/
 
         // Registering package commands.

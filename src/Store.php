@@ -1,6 +1,6 @@
 <?php
 
-namespace charlieuki\ReceiptPrinter;
+namespace Dashed\ReceiptPrinter;
 
 class Store
 {

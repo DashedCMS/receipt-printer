@@ -1,9 +1,9 @@
 <?php
 
-namespace charlieuki\ReceiptPrinter;
+namespace Dashed\ReceiptPrinter;
 
-use charlieuki\ReceiptPrinter\Item as Item;
-use charlieuki\ReceiptPrinter\Store as Store;
+use Dashed\ReceiptPrinter\Item as Item;
+use Dashed\ReceiptPrinter\Store as Store;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
@@ -79,7 +79,7 @@ class ReceiptPrinter
     public function addItem($name, $qty, $price) {
         $item = new Item($name, $qty, $price);
         $item->setCurrency($this->currency);
-        
+
         $this->items[] = $item;
     }
 
@@ -89,7 +89,7 @@ class ReceiptPrinter
 
     public function setTax($tax) {
         $this->tax_percentage = $tax;
-        
+
         if ($this->subtotal == 0) {
             $this->calculateSubtotal();
         }
