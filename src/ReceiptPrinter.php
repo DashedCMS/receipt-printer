@@ -2,8 +2,8 @@
 
 namespace Dashed\ReceiptPrinter;
 
-use charlieuki\ReceiptPrinter\Item as Item;
-use charlieuki\ReceiptPrinter\Store as Store;
+use Dashed\ReceiptPrinter\Item as Item;
+use Dashed\ReceiptPrinter\Store as Store;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
