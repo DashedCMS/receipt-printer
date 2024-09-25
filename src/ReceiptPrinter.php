@@ -156,6 +156,10 @@ class ReceiptPrinter
         $this->printer->cut();
     }
 
+    public function openDrawer() {
+        $this->printer->pulse();
+    }
+
     public function printDashedLine() {
         $line = '';
 
