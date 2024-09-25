@@ -2,8 +2,8 @@
 
 namespace Dashed\ReceiptPrinter;
 
-use Dashed\ReceiptPrinter\Item as Item;
-use Dashed\ReceiptPrinter\Store as Store;
+use charlieuki\ReceiptPrinter\Item as Item;
+use charlieuki\ReceiptPrinter\Store as Store;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\EscposImage;
@@ -154,10 +154,6 @@ class ReceiptPrinter
 
     public function cut() {
         $this->printer->cut();
-    }
-
-    public function openDrawer() {
-        $this->printer->pulse();
     }
 
     public function printDashedLine() {
