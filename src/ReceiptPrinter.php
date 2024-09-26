@@ -2,6 +2,7 @@
 
 namespace Dashed\ReceiptPrinter;
 
+use Exception;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\CapabilityProfile;
