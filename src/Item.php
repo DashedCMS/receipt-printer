@@ -10,26 +10,31 @@ class Item
     private $price;
     private $currency = '€';
 
-    function __construct($name, $qty, $price) {
+    public function __construct($name, $qty, $price)
+    {
         $this->name = $name;
         $this->qty = $qty;
         $this->price = $price;
         $this->paper_size = '80mm';
     }
 
-    public function setCurrency($currency) {
+    public function setCurrency($currency)
+    {
         $this->currency = $currency;
     }
 
-    public function setPaperSize($paper_size) {
+    public function setPaperSize($paper_size)
+    {
         $this->paper_size = $paper_size;
     }
 
-    public function getQty() {
+    public function getQty()
+    {
         return $this->qty;
     }
 
-    public function getPrice() {
+    public function getPrice()
+    {
         return $this->price;
     }
 
@@ -39,10 +44,12 @@ class Item
             case '80mm':
                 $right_cols = 15;
                 $left_cols = 35;
+
                 break;
             default:
                 $right_cols = 10;
                 $left_cols = 22;
+
                 break;
         }
 

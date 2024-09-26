@@ -10,7 +10,8 @@ class Store
     private $email = '';
     private $website = '';
 
-    function __construct($name, $address, $phone, $email, $website) {
+    public function __construct($name, $address, $phone, $email, $website)
+    {
         $this->name = $name;
         $this->address = $address;
         $this->phone = $phone;
@@ -18,23 +19,28 @@ class Store
         $this->website = $website;
     }
 
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function getAddress() {
+    public function getAddress()
+    {
         return $this->address;
     }
 
-    public function getPhone() {
+    public function getPhone()
+    {
         return $this->phone;
     }
 
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
-    public function getWebsite() {
+    public function getWebsite()
+    {
         return $this->website;
     }
 }

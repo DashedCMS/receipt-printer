@@ -35,7 +35,7 @@ class ReceiptPrinterServiceProvider extends ServiceProvider
 
         // Register the service the package provides.
         $this->app->singleton('receiptprinter', function ($app) {
-            return new ReceiptPrinter;
+            return new ReceiptPrinter();
         });
     }
 

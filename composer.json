@@ -24,7 +24,8 @@
         "phpunit/phpunit": "^11.3",
         "mockery/mockery": "^1.1",
         "orchestra/testbench": "^9.5",
-        "sempro/phpunit-pretty-print": "^1.0"
+        "sempro/phpunit-pretty-print": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.64"
     },
     "autoload": {
         "psr-4": {
@@ -45,5 +46,10 @@
                 "ReceiptPrinter": "Dashed\\ReceiptPrinter\\Facades\\ReceiptPrinter"
             }
         }
+    },
+    "scripts": {
+        "format": [
+            "vendor/bin/php-cs-fixer fix"
+        ]
     }
 }

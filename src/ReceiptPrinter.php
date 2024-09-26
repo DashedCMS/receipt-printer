@@ -2,18 +2,18 @@
 
 namespace Dashed\ReceiptPrinter;
 
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
+use Mike42\Escpos\CapabilityProfile;
+use Dashed\ReceiptPrinter\Item as Item;
+use Dashed\ReceiptPrinter\Store as Store;
 use Dashed\DashedCore\Models\Customsetting;
 use Dashed\DashedEcommerceCore\Models\Order;
 use Dashed\DashedTranslations\Models\Translation;
-use Dashed\ReceiptPrinter\Item as Item;
-use Dashed\ReceiptPrinter\Store as Store;
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\CapabilityProfile;
-use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
-use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 class ReceiptPrinter
 {
@@ -31,7 +31,7 @@ class ReceiptPrinter
     private $transaction_id = '';
     private $order;
 
-    function __construct()
+    public function __construct()
     {
         $this->printer = null;
         $this->items = [];
@@ -42,15 +42,19 @@ class ReceiptPrinter
         switch (strtolower($connector_type)) {
             case 'cups':
                 $connector = new CupsPrintConnector($connector_descriptor);
+
                 break;
             case 'windows':
                 $connector = new WindowsPrintConnector($connector_descriptor);
+
                 break;
             case 'network':
                 $connector = new NetworkPrintConnector($connector_descriptor);
+
                 break;
             default:
                 $connector = new FilePrintConnector("php://stdout");
+
                 break;
         }
 
@@ -176,7 +180,7 @@ class ReceiptPrinter
         return str_pad($label, $left_cols) . str_pad($value, $right_cols, ' ', STR_PAD_LEFT);
     }
 
-    public function feed($feed = NULL)
+    public function feed($feed = null)
     {
         $this->printer->feed($feed);
     }
@@ -214,12 +218,15 @@ class ReceiptPrinter
             switch ($mode) {
                 case 0:
                     $this->printer->graphics($image);
+
                     break;
                 case 1:
                     $this->printer->bitImage($image);
+
                     break;
                 case 2:
                     $this->printer->bitImageColumnFormat($image);
+
                     break;
             }
 
@@ -229,14 +236,14 @@ class ReceiptPrinter
 
     public function printQRcode()
     {
-        if (!empty($this->qr_code)) {
+        if (! empty($this->qr_code)) {
             $this->printer->qrCode($this->getPrintableQRcode(), Printer::BARCODE_TEXT_BELOW, 8);
         }
     }
 
     public function printBarcode()
     {
-        if (!empty($this->qr_code)) {
+        if (! empty($this->qr_code)) {
             $this->printer->barcode('{B' . $this->qr_code, Printer::BARCODE_CODE128);
         }
     }
@@ -298,7 +305,7 @@ class ReceiptPrinter
             $this->printer->feed();
 
             $this->printDashedLine();
-            foreach($this->order->vat_percentages ?: [] as $vat_percentage => $vat_amount) {
+            foreach ($this->order->vat_percentages ?: [] as $vat_percentage => $vat_amount) {
                 $this->printer->text($this->getPrintableSummary(Translation::get('tax-percentage', 'receipt', 'BTW') . ' ' . $vat_percentage . '%', $vat_amount) . "\n");
             }
             $this->printer->text($this->getPrintableSummary(Translation::get('tax-total', 'receipt', 'BTW totaal'), $this->order->btw) . "\n");
@@ -324,7 +331,7 @@ class ReceiptPrinter
             $this->printer->setJustification(Printer::JUSTIFY_CENTER);
             $this->printer->text(Translation::get('thanks-for-shopping', 'receipt', 'Bedankt voor je bezoek!'));
             $this->printer->feed();
-//            // Print receipt date
+            //            // Print receipt date
             $this->printer->text(date('j F Y H:i:s'));
             $this->printer->feed(2);
             $this->printer->text('Email: ' . Customsetting::get('site_to_email') . "\n");
