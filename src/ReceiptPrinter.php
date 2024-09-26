@@ -167,7 +167,7 @@ class ReceiptPrinter
     public function getPrintableSummary($label, $value, $is_double_width = false, $format = true)
     {
         $left_cols = $is_double_width ? 6 : 12;
-        $right_cols = $is_double_width ? 10 : 20;
+        $right_cols = $is_double_width ? 19 : 36;
 
         if ($format) {
             $value = $this->currency . number_format($value, 2, ',', '.');
@@ -270,16 +270,16 @@ class ReceiptPrinter
             $this->printer->text(Customsetting::get('company_postal_code') . ' ' . Customsetting::get('company_city') . "\n");
             $this->feed(2);
 
-            $this->printDashedLine();
-            $this->printer->text($this->getPrintableSummary(Translation::get('transaction_id', 'receipt', 'Transactie ID: '), '#' . $this->order->invoice_id, false, false) . "\n");
-            $this->printDashedLine();
-            $this->printer->feed();
-
             // Print receipt title
             $this->printer->setEmphasis(true);
             $this->printer->text(($isCopy ? Translation::get('receipt-copy', 'receipt', 'KOPIE BON') : Translation::get('receipt', 'receipt', 'BON')) . "\n");
             $this->printer->setEmphasis(false);
             $this->printer->feed();
+
+            $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+            $this->printer->text(Translation::get('transaction_id', 'receipt', 'Transactie ID:') . ' #' . $this->order->invoice_id, false, false) . "\n";
+            $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+            $this->printer->feed(2);
             // Print items
             $this->printer->setJustification(Printer::JUSTIFY_LEFT);
             $productCount = count($this->order->orderProducts);
@@ -290,14 +290,19 @@ class ReceiptPrinter
                 }
                 $productCount--;
             }
-            $this->printer->feed();
+            $this->printer->feed(2);
 
             $this->printer->setEmphasis(true);
             $this->printer->text($this->getPrintableSummary(Translation::get('subtotal', 'receipt', 'Subtotaal'), $this->order->subtotal));
             $this->printer->setEmphasis(false);
             $this->printer->feed();
 
-            $this->printer->text($this->getPrintableSummary(Translation::get('tax', 'receipt', 'BTW'), $this->order->btw));
+            $this->printDashedLine();
+            foreach($this->order->vat_percentages ?: [] as $vat_percentage => $vat_amount) {
+                $this->printer->text($this->getPrintableSummary(Translation::get('tax-percentage', 'receipt', 'BTW') . ' ' . $vat_percentage . '%', $vat_amount) . "\n");
+            }
+            $this->printer->text($this->getPrintableSummary(Translation::get('tax-total', 'receipt', 'BTW totaal'), $this->order->btw) . "\n");
+            $this->printDashedLine();
             $this->printer->feed(2);
 
             if ($this->order->discount > 0) {
@@ -308,8 +313,9 @@ class ReceiptPrinter
             }
 
             $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $this->printer->text($this->getPrintableSummary(Translation::get('total', 'receipt', 'Totaal'), $this->order->total, true) . "\n");
-            $this->printDashedLine(23);
+            $this->printer->text($this->getPrintableSummary(Translation::get('total', 'receipt', 'Totaal'), $this->order->total, true) . "\n", true);
+            $this->printer->selectPrintMode(Printer::MODE_EMPHASIZED);
+            $this->printDashedLine();
             $this->printer->feed();
 
             $this->printer->selectPrintMode();

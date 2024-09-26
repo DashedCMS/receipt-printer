@@ -38,7 +38,7 @@ class Item
         switch ($this->paper_size) {
             case '80mm':
                 $right_cols = 15;
-                $left_cols = 32;
+                $left_cols = 35;
                 break;
             default:
                 $right_cols = 10;
