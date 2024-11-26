@@ -311,6 +311,13 @@ class ReceiptPrinter
             }
             $this->printer->text($this->getPrintableSummary(Translation::get('tax-total', 'receipt', 'BTW totaal'), $this->order->btw) . "\n");
             $this->printDashedLine();
+            $this->printer->feed();
+
+            $this->printDashedLine();
+            foreach ($this->order->orderPayments as $orderPayment) {
+                $this->printer->text($this->getPrintableSummary($orderPayment->payment_method, $orderPayment->amount) . "\n");
+            }
+            $this->printDashedLine();
             $this->printer->feed(2);
 
             if ($this->order->discount > 0) {
