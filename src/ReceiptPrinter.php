@@ -313,7 +313,6 @@ class ReceiptPrinter
             $this->printDashedLine();
             $this->printer->feed();
 
-            $this->printDashedLine();
             foreach ($this->order->orderPayments as $orderPayment) {
                 $this->printer->text($this->getPrintableSummary($orderPayment->payment_method, $orderPayment->amount) . "\n");
             }
