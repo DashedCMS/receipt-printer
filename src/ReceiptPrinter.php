@@ -402,7 +402,8 @@ class ReceiptPrinter
             $this->printer->text($footer);
             $this->printer->feed();
             // Print receipt date
-            $this->printer->text(date('j F Y H:i:s'));
+            $this->printer->text($this->order->created_at->format('j F Y H:i:s'));
+//            $this->printer->text(date('j F Y H:i:s'));
             $this->printer->feed(2);
             // Cut the receipt
             $this->printer->cut();
