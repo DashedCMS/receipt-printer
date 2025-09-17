@@ -339,7 +339,8 @@ class ReceiptPrinter
             $this->printer->text(Translation::get('thanks-for-shopping', 'receipt', 'Bedankt voor je bezoek!'));
             $this->printer->feed();
             //            // Print receipt date
-            $this->printer->text(date('j F Y H:i:s'));
+//            $this->printer->text(date('j F Y H:i:s'));
+            $this->printer->text($this->order->created_at->format('j F Y H:i:s'));
             $this->printer->feed(2);
             $this->printer->text('Email: ' . Customsetting::get('site_to_email') . "\n");
             $this->printer->text('Webshop: ' . url('/') . "\n");
