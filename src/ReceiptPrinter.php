@@ -292,7 +292,7 @@ class ReceiptPrinter
             $this->printer->setJustification(Printer::JUSTIFY_LEFT);
             $productCount = count($this->order->orderProducts);
             foreach ($this->order->orderProducts as $orderProduct) {
-                $this->printer->text(new \Dashed\ReceiptPrinter\Item($orderProduct->name, $orderProduct->quantity, $orderProduct->price));
+                $this->printer->text(new \Dashed\ReceiptPrinter\Item($orderProduct->name, $orderProduct->quantity, $orderProduct->price / $orderProduct->quantity));
                 if ($productCount > 1) {
                     $this->printDashedLine();
                 }
