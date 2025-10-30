@@ -237,14 +237,14 @@ class ReceiptPrinter
 
     public function printQRcode()
     {
-        if (! empty($this->qr_code)) {
+        if (!empty($this->qr_code)) {
             $this->printer->qrCode($this->getPrintableQRcode(), Printer::BARCODE_TEXT_BELOW, 8);
         }
     }
 
     public function printBarcode()
     {
-        if (! empty($this->qr_code)) {
+        if (!empty($this->qr_code)) {
             $this->printer->barcode('{B' . $this->qr_code, Printer::BARCODE_CODE128);
         }
     }
@@ -309,7 +309,9 @@ class ReceiptPrinter
             foreach ($this->order->vat_percentages ?: [] as $vat_percentage => $vat_amount) {
                 $this->printer->text($this->getPrintableSummary(Translation::get('tax-percentage', 'receipt', 'BTW') . ' ' . $vat_percentage . '%', $vat_amount) . "\n");
             }
-            $this->printer->text($this->getPrintableSummary(Translation::get('tax-total', 'receipt', 'BTW totaal'), $this->order->btw) . "\n");
+            if (count($this->order->vat_percentages ?: []) > 1) {
+                $this->printer->text($this->getPrintableSummary(Translation::get('tax-total', 'receipt', 'BTW totaal'), $this->order->btw) . "\n");
+            }
             $this->printDashedLine();
             $this->printer->feed();
 
